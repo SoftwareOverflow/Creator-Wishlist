@@ -5,7 +5,7 @@ namespace Infrastructure.Persistence.Entity
 {
     public class ApplicationUser : IdentityUser<int>
     {
-        public Guid Guid { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         public bool IsCreator { get; set; }
 

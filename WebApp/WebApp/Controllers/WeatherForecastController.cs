@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
 
-namespace WebApp.API.Controllers
+namespace WebUI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

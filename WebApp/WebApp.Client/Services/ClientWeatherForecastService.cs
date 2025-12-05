@@ -2,7 +2,7 @@
 using Shared.DTO;
 using System.Net.Http.Json;
 
-namespace WebApp.Client.Services
+namespace WebUI.Client.Services
 {
     public class ClientWeatherForecastService : IWeatherForecastService
     {

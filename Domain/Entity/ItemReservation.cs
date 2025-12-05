@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entity
 {
-    public class ItemReservation : BaseEntity
+    public class ItemReservation : BaseEntity, IBelongToUser
     {
         // The ID of the reserved item
         public int ItemId { get; set; }

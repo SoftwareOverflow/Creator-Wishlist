@@ -1,34 +1,46 @@
 using Application.DependencyInjection;
+using Application.Service.Interfaces;
 using Infrastructure.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using WebApp.API.Components;
+using Infrastructure.Persistence.Entity;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using WebUI.Components;
+using WebUI.Components.Account;
+using WebUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("DefaultConnection connection string not found");
-
-/*builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
-
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();*/
-
-builder.Services.AddInfrastructure(connectionString);
-builder.Services.AddApplication();
-
-/*builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-//builder.Services.AddScoped<WishlistService>();
-builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();*/
-
-
-builder.Services.AddRazorPages();
-builder.Services.AddControllers();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+    .AddIdentityCookies();
+
+
+// Add solution layers
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, BlazorUserService>();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>(); // TODO this should probably move to different layer - UI need not know about the EmailSender used
+
+
+builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -45,33 +57,21 @@ else
 }
 
 
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
-//app.UseAntiforgery();
+app.UseAntiforgery();
 
+app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(WebApp.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(WebUI.Client._Imports).Assembly);
 
-app.UseBlazorFrameworkFiles();
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
 
-// Authentication and Authorization must happen before mapping the endpoints
-app.UseAuthentication();
-app.UseAuthorization();
-
-
-app.UseRouting();
-app.UseAntiforgery();
-// 1. Map your API Controllers (e.g., /api/wishlist)
 app.MapControllers();
 
-// 2. Map Razor Pages (CRITICAL for Identity UI)
-// This enables the server to respond to /Identity/Account/Register
-app.MapRazorPages();
-
-// 3. Map the Blazor client fallback (everything else goes to the client router)
-app.MapFallbackToFile("index.html");
 
 app.Run();

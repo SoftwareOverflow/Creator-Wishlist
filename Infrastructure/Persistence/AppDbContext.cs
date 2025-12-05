@@ -1,4 +1,6 @@
-﻿using Domain.Entity;
+﻿using Application.Service.Interfaces;
+using Domain.Entity;
+using Infrastructure.Persistence.Configuration;
 using Infrastructure.Persistence.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,9 +11,14 @@ namespace Infrastructure.Persistence
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
-        public DbSet<Wishlist> Wishlists { get; set; }
+        private readonly ICurrentUserService _currentUserService;
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUserService currentUserService) : base(options)
+        {
+            _currentUserService = currentUserService;
+        }
+
+        public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,6 +31,19 @@ namespace Infrastructure.Persistence
             {
                 builder.HasIndex(x => x.Guid).IsUnique();
             });
+
+/*            var currentUserGuid = _currentUserService.UserGuid;
+            var internalUserId = Users.Where(u => u.Guid == currentUserGuid)
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+            builder.FilterForCurrentUser(internalUserId);*/
+
+        }
+
+        public override int SaveChanges()
+        {
+            return base.SaveChanges();
         }
     }
 }

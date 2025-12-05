@@ -61,5 +61,11 @@ namespace Infrastructure.Persistence.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<Wishlist>> GetWishlistsForUser(int userId)
+        {
+            return Task.FromResult(
+                _context.Wishlists.Where(w => w.UserId == userId).Include(w => w.Items).AsEnumerable());
+        }
     }
 }

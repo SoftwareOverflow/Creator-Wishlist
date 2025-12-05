@@ -1,18 +1,33 @@
-﻿using Application.Service;
+﻿using Application.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTO.Wishlist;
+using Shared.DTO.Wishlist.Commands;
+using Shared.DTO.Wishlist.Dtos;
+using Shared.DTO.Wishlist.Queries;
 
-namespace WebApp.API.Controllers
+namespace WebUI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class WishlistController : ControllerBase
     {
-        private readonly WishlistService _wishlistService;
+        private readonly IWishlistService _wishlistService;
 
-        public WishlistController(WishlistService wishlistService)
+        public WishlistController(IWishlistService wishlistService)
         {
             _wishlistService = wishlistService;
+        }
+
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<WishlistSummaryDto>>> GetWishlistsForUser()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var query = new WishlistsForUserQuery();
+            var result = await _wishlistService.GetWishlistsForUser(query);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -27,7 +42,7 @@ namespace WebApp.API.Controllers
             {
                 var publicId = await _wishlistService.CreateWishlistAsync(command);
 
-                return CreatedAtAction(nameof(GetWishlistDetails), new { publicId = publicId }, publicId);
+                return CreatedAtAction(nameof(GetWishlistDetailsForUser), new { publicId }, publicId);
             }
             catch (ArgumentException ex)
             {
@@ -46,11 +61,21 @@ namespace WebApp.API.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult GetWishlistDetails(Guid publicGuid)
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<WishlistDetailsDto>> GetWishlistDetailsForUser(Guid id)
         {
-            // TODO Implement WishlistDetailsQuery dto, and retrieve the data.
-            return Ok($"Fetching data for wishlist {publicGuid}");
+            // TODO error checking..
+
+            var result = await _wishlistService.GetWishlistDetailsForUser(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
     }
 }

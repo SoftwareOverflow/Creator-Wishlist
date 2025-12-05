@@ -1,0 +1,55 @@
+﻿@rendermode InteractiveServer
+
+@page "/user/wishlists"
+@layout UserLayout
+
+@using Application.Service.Interfaces
+@using Microsoft.AspNetCore.Authorization
+
+<h3>My Wishlists</h3>
+
+@if (_wishlists.Count == 0)
+{
+    <p><i>You have no curent Wishlists!</i></p>
+}
+
+@foreach (var wishlist in _wishlists)
+{
+    <div>
+        <div class="p-1 m-3 bg-light">
+            <div class="w-75">
+                <h4>
+                    @wishlist.Title
+                </h4>
+                <p>
+                    @wishlist.Description
+                </p>
+                <small>Items: @wishlist.ItemsCount</small>
+            </div>
+            <div class="w-25">
+                <button class="btn btn-primary" @onclick="@(e => GoToWishlistDetails(wishlist.Guid))">Open Wishlist</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="bg-light p3">
+    <EditForm Model="CreateWishlistModel" OnValidSubmit="SubmitCreateWishlistForm" FormName="CreateWishlistForm">
+        <div>
+            <label>
+                Title:
+                <InputText @bind-Value="CreateWishlistModel!.Title" />
+            </label>
+        </div>
+        <div>
+            <label>
+                Description:
+                <InputText @bind-Value="CreateWishlistModel!.Description" />
+            </label>
+        </div>
+
+        <div>
+            <button type="submit">Create My Wishlist</button>
+        </div>
+    </EditForm>
+</div>

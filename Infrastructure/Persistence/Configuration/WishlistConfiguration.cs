@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence.Configuration
             // This is because I have separated the User (domain) and AppUser (IdentityUser for EF)
             builder.HasOne<ApplicationUser>()
                    .WithMany(u => u.Wishlists)
-                   .HasForeignKey(w => w.CreatorId)
+                   .HasForeignKey(w => w.UserId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Restrict);
         }

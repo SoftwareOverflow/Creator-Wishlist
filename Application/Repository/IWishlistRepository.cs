@@ -11,5 +11,7 @@ namespace Application.Repository
         Task<WishlistItem?> GetItemById(int id, int wishlistId);
 
         Task DeleteItemAsync(WishlistItem item);
+
+        Task<IEnumerable<Wishlist>> GetWishlistsForUser(int userId);
     }
 }

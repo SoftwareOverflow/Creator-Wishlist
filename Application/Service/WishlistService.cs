@@ -1,13 +1,17 @@
 ﻿using Application.Repository;
+using Application.Service.Interfaces;
+using Application.Service.Mappers;
 using Domain.Entity;
-using Shared.DTO.Wishlist;
+using Shared.DTO.Wishlist.Commands;
+using Shared.DTO.Wishlist.Dtos;
+using Shared.DTO.Wishlist.Queries;
 
 namespace Application.Service
 {
-    public class WishlistService
+    public class WishlistService : IWishlistService
     {
-        private IWishlistRepository _wishlistRepository;
-        private IUserRepository _userRepository;
+        private readonly IWishlistRepository _wishlistRepository;
+        private readonly IUserRepository _userRepository;
 
         public WishlistService(IWishlistRepository wishlistRepository, IUserRepository userRepository)
         {
@@ -22,31 +26,62 @@ namespace Application.Service
                 throw new ArgumentException("Wishlist name cannot be empty.");
             }
 
-            int creatorInternalId;
-            try
-            {
-                creatorInternalId = await _userRepository.GetInternalIdFromPublicIdAsync(command.CreatorPublicId);
-                var creator = await _userRepository.GetByIdAsync(creatorInternalId);
-                if (creator == null || !creator.IsCreator)
-                {
-                    throw new UnauthorizedAccessException("User is not authorized to create wishlists.");
-                }
-            } catch(InvalidOperationException) // TODO check this correct catch for the UserRepo
-            {
-                throw new UnauthorizedAccessException("The specified creator ID does not exist or is invalid");
-            }
-
+            var creatorInternalId = await _userRepository.GetCurrentUserId();
+            
+            // TODO move this to mapper?
             var wishlist = new Wishlist
             {
                 Guid = Guid.NewGuid(),
-                CreatorId = creatorInternalId,
-                Name = command.Title,
+                UserId = creatorInternalId,
+                Title = command.Title,
                 Description = command.Description,
             };
 
             await _wishlistRepository.AddAsync(wishlist);
 
             return wishlist.Guid;
+        }
+
+        public async Task<IReadOnlyList<WishlistSummaryDto>> GetWishlistsForUser(WishlistsForUserQuery query)
+        {
+            Console.WriteLine("Getting wishlists for user");
+            // TODO any business logic for checking subsciption levels or similar.
+            var creatorInternalId = await _userRepository.GetCurrentUserId();
+            var wishlists = await _wishlistRepository.GetWishlistsForUser(creatorInternalId);
+
+            var result = wishlists.ToSummaryDto();
+
+            return [.. result];
+        }
+
+        public async Task<WishlistDetailsDto> GetWishlistDetails(Guid id)
+        {
+            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id);
+
+            var wishlist = await _wishlistRepository.GetByIdAsync(internalId);
+
+            var result = wishlist.ToDetailsDto();
+
+            return result;
+        }
+
+        public async Task<WishlistDetailsDto> GetWishlistDetailsForUser(Guid id)
+        {
+            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id);
+
+            var wishlist = await _wishlistRepository.GetByIdAsync(internalId);
+            
+            var currentUserId = await _userRepository.GetCurrentUserId();
+
+            // Ensure that the current user is the owner of this wishlist.
+            if(wishlist.UserId != currentUserId)
+            {
+                // TODO throw some UnauthorizedAccess exception? Or return null? Think about what's best to avoid leaking valid Guid...
+                throw new UnauthorizedAccessException("Current user does not have permission to access the requested wishlist");
+            }
+
+            return wishlist.ToDetailsDto();
+
         }
     }
 }

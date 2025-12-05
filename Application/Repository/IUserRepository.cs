@@ -7,5 +7,7 @@ namespace Application.Repository
         Task<int> GetInternalIdFromPublicIdAsync(Guid id);
 
         Task<User> GetByIdAsync(int id);
+
+        Task<int> GetCurrentUserId();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Application.Repository;
-using Application.Service;
+﻿using Application.Service;
 using Application.Service.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +10,7 @@ namespace Application.DependencyInjection
         {
             //builder.Services.AddScoped<WishlistService>();
             services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+            services.AddScoped<IWishlistService, WishlistService>();
 
             return services;
         }

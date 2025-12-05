@@ -10,6 +10,6 @@
         /// <summary>
         /// Public facing ID
         /// </summary>
-        public Guid Guid { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
     }
 }
