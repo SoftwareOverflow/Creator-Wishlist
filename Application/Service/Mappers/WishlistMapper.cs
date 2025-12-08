@@ -32,7 +32,8 @@ namespace Application.Service.Mappers
             Guid = item.Guid,
             Name = item.Name,
             Description = item.Description,
-            IamgeUrl = item.ImageUrl
+            ItemUrl = item.ItemUrl,
+            ImageUrl = item.ImageUrl
         };
     }
 }

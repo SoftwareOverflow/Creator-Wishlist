@@ -1,10 +1,14 @@
-﻿@page "/user/wishlists/{Id:guid}"
+﻿@page "/user/wishlists/{WishlistId:guid}"
 @layout UserLayout
+
+@rendermode InteractiveServer
+
+@attribute [StreamRendering(true)]
 
 
 <h3>WishlistDetails</h3>
 
-@if(_wishlist == null)
+@if (_wishlist == null)
 {
     <p>Loading...</p>
 }
@@ -31,4 +35,11 @@ else
             <p>@wishlistItem.Description</p>
         </div>
     }
+
+    <div>
+        <button class="btn btn-primary" @onclick="CreateNewWishlistItem" data-bs-toggle="modal" data-bs-target="#ABCDEFG">
+            <span>&#43;</span>
+            <span>Add New Wishlist Item</span>
+        </button>
+    </div>
 }

@@ -1,9 +1,19 @@
-﻿namespace Domain.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Entity
 {
     public class Wishlist : BaseEntity, IBelongToUser
     {
+        /// <summary>
+        /// Title for the wishlist
+        /// </summary>
+        [Required]
         public string Title { get; set; }
-        public string Description { get; set; }
+
+        /// <summary>
+        /// Optional description of the wishlist
+        /// </summary>
+        public string? Description { get; set; }
 
 
         /// <summary>

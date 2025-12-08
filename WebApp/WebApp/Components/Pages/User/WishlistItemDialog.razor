@@ -1,0 +1,49 @@
+﻿@using Shared.DTO.Wishlist.Commands
+@using Shared.DTO.Wishlist.Dtos
+@using Shared.DTO.WishlistItem.Commands
+
+@rendermode InteractiveServer
+
+<RadzenTemplateForm TItem=WishlistItemBaseCommand Data="@WishlistItemCommand" Submit="SaveChanges">
+    <RadzenFieldset Text="Wishlist Item Details">
+        <RadzenStack Gap="1rem">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenLabel Text="Name" Component="Name" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="8">
+                    <RadzenTextBox Style="width: 100%;" class="d-block" Name="Name" @bind-value="WishlistItemCommand.Name" />
+                    <RadzenRequiredValidator Component="Name" Text="Item name is required" Popup=true Style="position: absolute" />
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenLabel Text="Description" Component="Description" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="8">
+                    <RadzenTextBox Style="width: 100%;" Placeholder="Optional Description..." Name="Description" @bind-value="WishlistItemCommand.Description" />
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenLabel Text="Item Link" Component="ItemUrl" />
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="8">
+                    <RadzenTextBox Style="width: 100%;" Placeholder="Optional URL to the item..." Name="ItemUrl" @bind-value="WishlistItemCommand.ItemUrl" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenFieldset>
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Class="rz-mt-4" Gap="0.5rem">
+        <RadzenButton ButtonType="ButtonType.Button" Text="Cancel" ButtonStyle="ButtonStyle.Light" Click="@(_ => DialogService.Close(null))" />
+        <RadzenButton ButtonType="ButtonType.Submit" Text="Save Item" Icon="save" ButtonStyle="ButtonStyle.Primary" Disabled="@_isSaving" />
+
+    </RadzenStack>
+    @if (_isSaving)
+    {
+        <RadzenProgressBar Value="100" ShowValue="false" Class="rz-mt-2" />
+    }
+</RadzenTemplateForm>

@@ -4,10 +4,12 @@
     {
         public Guid Guid { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string IamgeUrl { get; set; }
+        public string? ItemUrl { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

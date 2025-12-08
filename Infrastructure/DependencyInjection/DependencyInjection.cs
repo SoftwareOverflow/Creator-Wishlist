@@ -30,6 +30,7 @@ namespace Infrastructure.DependencyInjection
 
             // Database Repository services
             services.AddScoped<IWishlistRepository, WishlistRepository>();
+            services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
             return services;

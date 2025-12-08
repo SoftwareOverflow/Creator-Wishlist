@@ -15,6 +15,6 @@ namespace Shared.DTO.Wishlist.Commands
         /// <summary>
         /// Optional description for the wishlist
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

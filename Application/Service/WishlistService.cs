@@ -8,7 +8,7 @@ using Shared.DTO.Wishlist.Queries;
 
 namespace Application.Service
 {
-    public class WishlistService : IWishlistService
+    internal class WishlistService : IWishlistService
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IUserRepository _userRepository;
@@ -37,14 +37,13 @@ namespace Application.Service
                 Description = command.Description,
             };
 
-            await _wishlistRepository.AddAsync(wishlist);
+            var result = await _wishlistRepository.AddAsync(wishlist);
 
-            return wishlist.Guid;
+            return result.Guid;
         }
 
         public async Task<IReadOnlyList<WishlistSummaryDto>> GetWishlistsForUser(WishlistsForUserQuery query)
         {
-            Console.WriteLine("Getting wishlists for user");
             // TODO any business logic for checking subsciption levels or similar.
             var creatorInternalId = await _userRepository.GetCurrentUserId();
             var wishlists = await _wishlistRepository.GetWishlistsForUser(creatorInternalId);
@@ -56,9 +55,9 @@ namespace Application.Service
 
         public async Task<WishlistDetailsDto> GetWishlistDetails(Guid id)
         {
-            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id);
+            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id) ?? throw new InvalidOperationException("Not Found");
 
-            var wishlist = await _wishlistRepository.GetByIdAsync(internalId);
+            var wishlist = await _wishlistRepository.GetByIdAsync(internalId) ?? throw new InvalidOperationException("Not Found");
 
             var result = wishlist.ToDetailsDto();
 
@@ -67,7 +66,7 @@ namespace Application.Service
 
         public async Task<WishlistDetailsDto> GetWishlistDetailsForUser(Guid id)
         {
-            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id);
+            var internalId = await _wishlistRepository.GetInternalIdByPublicIdAsync(id) ?? throw new InvalidOperationException("Not Found");
 
             var wishlist = await _wishlistRepository.GetByIdAsync(internalId);
             

@@ -10,7 +10,7 @@ namespace Shared.DTO.Wishlist.Dtos
         [Required]
         public string Title { get; set; } = String.Empty;
 
-        public string Description { get; set; } = String.Empty;
+        public string? Description { get; set; }
 
         public IEnumerable<WishlistItemDto> Items { get; set; } = [];
     }

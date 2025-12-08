@@ -167,7 +167,7 @@ namespace Infrastructure.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -183,22 +183,23 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WishlistItem",
+                name: "WishlistItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WishlistId = table.Column<int>(type: "int", nullable: false),
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WishlistItem", x => x.Id);
+                    table.PrimaryKey("PK_WishlistItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WishlistItem_Wishlists_WishlistId",
+                        name: "FK_WishlistItems_Wishlists_WishlistId",
                         column: x => x.WishlistId,
                         principalTable: "Wishlists",
                         principalColumn: "Id",
@@ -251,8 +252,8 @@ namespace Infrastructure.Persistence.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WishlistItem_WishlistId",
-                table: "WishlistItem",
+                name: "IX_WishlistItems_WishlistId",
+                table: "WishlistItems",
                 column: "WishlistId");
 
             migrationBuilder.CreateIndex(
@@ -286,7 +287,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "WishlistItem");
+                name: "WishlistItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

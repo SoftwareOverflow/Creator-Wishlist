@@ -1,6 +1,5 @@
 ﻿using Application.Service.Interfaces;
 using Domain.Entity;
-using Infrastructure.Persistence.Configuration;
 using Infrastructure.Persistence.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -13,12 +12,13 @@ namespace Infrastructure.Persistence
     {
         private readonly ICurrentUserService _currentUserService;
 
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUserService currentUserService) : base(options)
         {
             _currentUserService = currentUserService;
         }
-
-        public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

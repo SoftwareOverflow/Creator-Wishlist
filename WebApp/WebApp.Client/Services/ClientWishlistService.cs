@@ -3,8 +3,6 @@ using Shared.DTO.Wishlist.Commands;
 using Shared.DTO.Wishlist.Dtos;
 using Shared.DTO.Wishlist.Queries;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace WebUI.Client.Services
 {
@@ -19,7 +17,7 @@ namespace WebUI.Client.Services
 
         public async Task<Guid> CreateWishlistAsync(CreateWishlistCommand command)
         {
-            var response = await _http.PostAsJsonAsync("api/wishlist", command);
+            var response = await _http.PostAsJsonAsync("api/user/wishlist", command);
 
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -34,12 +32,12 @@ namespace WebUI.Client.Services
 
         public async Task<WishlistDetailsDto> GetWishlistDetailsForUser(Guid id)
         {
-            return await _http.GetFromJsonAsync<WishlistDetailsDto>($"api/Wishlist/{id.ToString()}");
+            return await _http.GetFromJsonAsync<WishlistDetailsDto>($"api/user/wishlist/{id.ToString()}");
         }
 
         public async Task<IReadOnlyList<WishlistSummaryDto>> GetWishlistsForUser(WishlistsForUserQuery query)
         {
-            return await _http.GetFromJsonAsync<IReadOnlyList<WishlistSummaryDto>>("api/wishlist/user");
+            return await _http.GetFromJsonAsync<IReadOnlyList<WishlistSummaryDto>>("api/user/wishlist");
         }
     }
 }

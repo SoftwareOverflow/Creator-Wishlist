@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repository
 {
-    public class UserRepository : IUserRepository
+    internal class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
         private readonly ICurrentUserService _currentUserService;

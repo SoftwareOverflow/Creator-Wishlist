@@ -7,17 +7,17 @@ using Shared.DTO.Wishlist.Queries;
 namespace WebUI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class WishlistController : ControllerBase
+    [Route("api/user/wishlists")]
+    public class UserWishlistController : ControllerBase
     {
         private readonly IWishlistService _wishlistService;
 
-        public WishlistController(IWishlistService wishlistService)
+        public UserWishlistController(IWishlistService wishlistService)
         {
             _wishlistService = wishlistService;
         }
 
-        [HttpGet("user")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<WishlistSummaryDto>>> GetWishlistsForUser()
         {
             if (!ModelState.IsValid)
@@ -61,7 +61,7 @@ namespace WebUI.Controllers
             }
         }
 
-        [HttpGet("user/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<WishlistDetailsDto>> GetWishlistDetailsForUser(Guid id)
         {
             // TODO error checking..

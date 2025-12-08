@@ -4,6 +4,7 @@ using Infrastructure.DependencyInjection;
 using Infrastructure.Persistence.Entity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Radzen;
 using WebUI.Components;
 using WebUI.Components.Account;
 using WebUI.Services;
@@ -41,6 +42,8 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+
+builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 

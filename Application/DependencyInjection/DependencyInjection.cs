@@ -8,9 +8,8 @@ namespace Application.DependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            //builder.Services.AddScoped<WishlistService>();
-            services.AddScoped<IWeatherForecastService, WeatherForecastService>();
             services.AddScoped<IWishlistService, WishlistService>();
+            services.AddScoped<IWishlistItemService, WishlistItemService>();
 
             return services;
         }
